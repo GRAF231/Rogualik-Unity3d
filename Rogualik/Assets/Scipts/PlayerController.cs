@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 1.5f;
     public float acceleration = 100;
+    public Camera cam;
 
     private Rigidbody2D body;
 
@@ -13,6 +14,8 @@ public class PlayerController : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         body.freezeRotation = true;
         body.gravityScale = 0;
+
+        cam = Camera.main;
     }
 
     void FixedUpdate()
@@ -40,14 +43,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.D))
         {
-            GetComponent<SpriteRenderer>().flipX = false;
             h = 1;
             if (body.velocity.x > speed) body.velocity = new Vector2(speed, body.velocity.y);
             if (body.velocity.x < 0) body.velocity = new Vector2(0, body.velocity.y);
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            GetComponent<SpriteRenderer>().flipX = true;
             h = -1;
             if (body.velocity.x < -speed) body.velocity = new Vector2(-speed, body.velocity.y);
             if (body.velocity.x > 0) body.velocity = new Vector2(0, body.velocity.y);
@@ -61,14 +62,14 @@ public class PlayerController : MonoBehaviour
         Vector2 vector = new Vector2(h * speed, v * speed);
         body.AddForce(vector, ForceMode2D.Impulse);
 
-        //Вращение
-        //Vector3 dir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        //dir.Normalize();
-        //body.AddTorque(Vector2.SignedAngle(transform.up, dir));
-        //if ((transform.up - dir).sqrMagnitude < 0.2 * 0.2)
-        //{
-        //    body.angularVelocity = 0;
-        //}
+        
+        Vector3 dir = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        
+        if (transform.position.x > dir.x)
+            GetComponent<SpriteRenderer>().flipX = true;
+        else
+            GetComponent<SpriteRenderer>().flipX = false;
     }
 
     void LookAtCursor()
